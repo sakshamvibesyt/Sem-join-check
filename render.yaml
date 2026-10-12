@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: saksham-joingate
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: OWNER_ID
+        sync: false
+      - key: WEB_BASE_URL
+        sync: false
+      - key: GROUP_URL
+        value: https://t.me/+FlU57qlj_GVhM2E1
+      - key: CHANNEL_USERNAME
+        value: "@aboutsaksham"
+      - key: YOUTUBE_URL
+        value: https://youtube.com/@sakshamvibesyt
+      - key: DB_PATH
+        value: joingate.db
