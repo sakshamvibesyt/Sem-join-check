@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090b14">
+
+    <title>Saksham JoinGate | Membership Verification</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --bg: #090b14;
+            --card: #111525;
+            --border: rgba(255,255,255,.09);
+            --text: #f7f8ff;
+            --muted: #9ca8c2;
+            --purple: #8b5cf6;
+            --blue: #3878f5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Inter, -apple-system, BlinkMacSystemFont,
+                         "Segoe UI", Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(ellipse at 10% 0%, #5125a833, transparent 42%),
+                radial-gradient(ellipse at 100% 80%, #145ac522, transparent 38%),
+                var(--bg);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .brand {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            height: 48px;
+            width: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            box-shadow: 0 8px 30px #6941db55;
+            font-size: 25px;
+        }
+
+        .brand h1 {
+            font-size: 17px;
+            letter-spacing: 2px;
+            font-weight: 850;
+        }
+
+        .brand p {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .card {
+            padding: 26px;
+            border-radius: 25px;
+            border: 1px solid var(--border);
+            background: linear-gradient(145deg, #151a2c, #0e111d);
+            box-shadow: 0 25px 80px #0007;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #27614b;
+            border-radius: 30px;
+            background: #122c24;
+            color: #8cf0c1;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #48e3a2;
+            box-shadow: 0 0 10px #48e3a2;
+        }
+
+        h2 {
+            margin: 21px 0 11px;
+            font-size: 29px;
+            line-height: 1.2;
+            letter-spacing: -.8px;
+        }
+
+        .description {
+            margin-bottom: 23px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .links {
+            display: grid;
+            gap: 13px;
+            margin-bottom: 22px;
+        }
+
+        .link-card {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: #ffffff04;
+            color: var(--text);
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+        .link-card:hover {
+            transform: translateY(-2px);
+            border-color: #7662c7;
+            background: #ffffff09;
+        }
+
+        .icon {
+            width: 45px;
+            height: 45px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #203d70;
+            font-size: 23px;
+        }
+
+        .youtube .icon {
+            background: #49212b;
+        }
+
+        .link-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .link-info strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .link-info span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .arrow {
+            color: #aab4cc;
+            font-size: 21px;
+        }
+
+        .verify-button {
+            width: 100%;
+            min-height: 54px;
+            padding: 14px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(100deg, #7c3aed, #2563eb);
+            box-shadow: 0 10px 28px #5136b344;
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .verify-button:hover {
+            filter: brightness(1.12);
+        }
+
+        .verify-button:disabled {
+            opacity: .65;
+            cursor: wait;
+        }
+
+        .message {
+            display: none;
+            margin-top: 15px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #ffffff07;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            border-color: #713b4b;
+            background: #391b28;
+            color: #ffd3df;
+        }
+
+        .message.success {
+            border-color: #24634b;
+            background: #112c25;
+            color: #b7ffdc;
+        }
+
+        .return-button {
+            display: none;
+            width: 100%;
+            margin-top: 12px;
+            padding: 14px;
+            border: 1px solid #3159a2;
+            border-radius: 14px;
+            background: #172644;
+            color: white;
+            font-size: 14px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        .return-button.show {
+            display: block;
+        }
+
+        .footer {
+            margin: 19px 10px 0;
+            color: #7f8aa4;
+            font-size: 11px;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .footer strong {
+            color: #c3cce0;
+        }
+
+        @media (max-width: 380px) {
+            .card {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 25px;
+            }
+
+            .brand h1 {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<main class="container">
+
+    <header class="brand">
+        <div class="logo">✦</div>
+        <div>
+            <h1>SAKSHAM JOINGATE</h1>
+            <p>Secure Membership Verification</p>
+        </div>
+    </header>
+
+    <section class="card">
+
+        <div class="status">
+            <span class="status-dot"></span>
+            Verification Required
+        </div>
+
+        <h2>Welcome!<br>Let's get you verified.</h2>
+
+        <p class="description">
+            To unlock messaging in our Telegram group, please visit
+            our official channel and join it. Then return here and
+            verify your membership.
+        </p>
+
+        <div class="links">
+
+            <a class="link-card"
+               href="https://t.me/aboutsaksham"
+               target="_blank"
+               rel="noopener noreferrer">
+
+                <div class="icon">✈️</div>
+
+                <div class="link-info">
+                    <strong>Official Telegram Channel</strong>
+                    <span>@aboutsaksham · Join Channel</span>
+                </div>
+
+                <div class="arrow">↗</div>
+            </a>
+
+            <a class="link-card youtube"
+               href="https://youtube.com/@sakshamvibesyt"
+               target="_blank"
+               rel="noopener noreferrer">
+
+                <div class="icon">▶️</div>
+
+                <div class="link-info">
+                    <strong>Saksham Vibes on YouTube</strong>
+                    <span>Visit our YouTube channel</span>
+                </div>
+
+                <div class="arrow">↗</div>
+            </a>
+
+        </div>
+
+        <button class="verify-button" id="verifyBtn" type="button">
+            ✓ &nbsp; Done — Verify Membership
+        </button>
+
+        <div class="message" id="message" role="status" aria-live="polite"></div>
+
+        <button class="return-button" id="returnBtn" type="button">
+            ← Return to Telegram Group
+        </button>
+
+    </section>
+
+    <footer class="footer">
+        Protected by <strong>Saksham JoinGate</strong><br>
+        Telegram channel membership is checked before group access is restored.
+        YouTube is provided as an additional channel link.
+    </footer>
+
+</main>
+
+<script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+    }
+
+    // These values are supplied by the Flask template.
+    const verificationToken = {{ token|tojson }};
+
+    const verifyBtn = document.getElementById("verifyBtn");
+    const returnBtn = document.getElementById("returnBtn");
+    const message = document.getElementById("message");
+
+    function showMessage(text, type) {
+        message.textContent = text;
+        message.className = "message show " + (type || "");
+    }
+
+    verifyBtn.addEventListener("click", async () => {
+        if (!tg || !tg.initData) {
+            showMessage(
+                "Please open this page from the Verify Membership button in the Telegram bot chat. This is required to verify your identity securely.",
+                "error"
+            );
+            return;
+        }
+
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = "Checking membership…";
+
+        try {
+            const response = await fetch("/api/verify", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    initData: tg.initData,
+                    token: verificationToken
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.ok) {
+                showMessage(
+                    result.message ||
+                    "Membership verified successfully! You are now unmuted.",
+                    "success"
+                );
+
+                verifyBtn.textContent = "✓ Membership Verified";
+                returnBtn.classList.add("show");
+
+                if (tg) {
+                    tg.MainButton.setText("RETURN TO TELEGRAM");
+                    tg.MainButton.show();
+                    tg.MainButton.onClick(() => tg.close());
+                }
+            } else {
+                showMessage(
+                    result.message ||
+                    "Membership could not be verified. Please join the required channel and try again.",
+                    "error"
+                );
+
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = "↻ Try Verification Again";
+            }
+        } catch (error) {
+            showMessage(
+                "A connection error occurred. Please check your internet connection and try again.",
+                "error"
+            );
+
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = "↻ Try Again";
+        }
+    });
+
+    returnBtn.addEventListener("click", () => {
+        if (tg) {
+            tg.close();
+        } else {
+            window.location.href = "https://t.me/+FlU57qlj_GVhM2E1";
+        }
+    });
+</script>
+</body>
+                       </html>
